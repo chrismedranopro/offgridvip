@@ -1083,29 +1083,124 @@ function ExperientialEvents() {
 }
 
 function Investment() {
+  const journeySteps = [
+    {
+      step: "01",
+      title: "Discovery Call",
+      description: "Connect with our investment advisors to understand your financial goals, tax situation, and investment criteria.",
+    },
+    {
+      step: "02",
+      title: "Market Analysis",
+      description: "Receive detailed market reports on the highest-performing vacation rental markets tailored to your objectives.",
+    },
+    {
+      step: "03",
+      title: "Property Sourcing",
+      description: "Our network of exclusive real estate agents identifies investment-grade properties before they hit the market.",
+    },
+    {
+      step: "04",
+      title: "Tax Strategy",
+      description: "Work with our tax advisors to maximize deductions through cost segregation studies and bonus depreciation.",
+    },
+    {
+      step: "05",
+      title: "Acquisition & Setup",
+      description: "We handle due diligence, closing, furnishing, photography, and listing optimization — 100% turnkey.",
+    },
+    {
+      step: "06",
+      title: "Ongoing Management",
+      description: "Sit back and collect revenue while we manage operations, guests, maintenance, and maximize your ROI.",
+    },
+  ];
+
+  const auditCards = [
+    {
+      title: "Revenue Optimization",
+      description: "We benchmark pricing, occupancy, and channel mix to surface untapped revenue.",
+      icon: TrendingUp,
+    },
+    {
+      title: "Listing & Brand Polish",
+      description: "Photography, copy, and positioning audited against the luxury market standard.",
+      icon: Sparkles,
+    },
+    {
+      title: "Guest Experience Review",
+      description: "Amenities, service flow, and reviews assessed for repeat-stay potential.",
+      icon: Star,
+    },
+    {
+      title: "Market Comps",
+      description: "A clear read on how your property performs versus comparable luxury homes.",
+      icon: BarChart3,
+    },
+  ];
+
   return (
-    <ModulePage
-      eyebrow="Growth · Redefined"
-      title="Investment"
-      sub="“Build Wealth Through Strategic Real Estate” — the STR tax-advantage product: cost segregation, bonus depreciation, material participation"
-      metrics={[
-        { label: "Guide downloads, MTD", value: "142", icon: FileText },
-        { label: "Consultations booked", value: "23", icon: CalendarDays },
-        { label: "Consult → close rate", value: "18%", icon: TrendingUp },
-        { label: "Avg. stated tax savings", value: "$30K–$200K", icon: DollarSign, mono: false },
-      ]}
-      rowLabel="Consultation pipeline"
-      rows={[
-        { title: "R. Delacroix — cost segregation inquiry", meta: "Requested guide, consultation scheduled Thursday", tag: "Scheduled", tone: "warn" },
-        { title: "K. Nguyen — material participation questions", meta: "Follow-up on 100+ hour documentation requirement", tag: "In progress", tone: "idle" },
-        { title: "T. Osei — closed, onboarding to portfolio", meta: "Purchased through Off Grid's network this month", tag: "Closed", tone: "ok" },
-      ]}
-      aiTitle="Investment intelligence"
-      aiPoints={[
-        "This is a tax-advisory and acquisition product, not portfolio performance tracking — buyers come in through the guide/consultation funnel and need scenario-specific tax guidance before they'll book a call.",
-        "Consultation-to-close rate is the number that matters here; guide downloads are a leading indicator worth watching but not the goal itself.",
-      ]}
-    />
+    <div>
+      <PageTitle
+        eyebrow="Investment"
+        title="Your Investment Journey."
+        sub="A seamless, turnkey process from consultation to cash flow."
+      />
+
+      <div className="grid grid-cols-2 gap-5 mb-8">
+        <Card className="col-span-2 p-8" style={{ background: COLORS.ink, color: COLORS.canvas }}>
+          <h2 className="text-2xl font-semibold" style={{ fontFamily: "'Fraunces', serif" }}>
+            Invest smarter with a fully managed luxury rental investment service.
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: "rgba(242,241,236,0.85)" }}>
+            From audit and sourcing through acquisition, setup, and operations, we manage the entire lifecycle under one executive umbrella.
+          </p>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-3 gap-5 mb-8">
+        {journeySteps.map((item) => (
+          <Card key={item.step} className="p-6">
+            <div className="flex items-start gap-4 mb-4">
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold"
+                style={{ background: COLORS.brassLight, color: COLORS.ink, fontFamily: "'IBM Plex Mono', monospace" }}
+              >
+                {item.step}
+              </div>
+              <div>
+                <div className="text-lg font-semibold" style={{ color: COLORS.ink }}>{item.title}</div>
+                <p className="text-sm mt-2 leading-relaxed" style={{ color: COLORS.ink2 }}>{item.description}</p>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="text-center mb-5">
+        <h2 className="text-xl font-semibold" style={{ fontFamily: "'Fraunces', serif", color: COLORS.ink }}>
+          What Your Free Audit Covers
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed max-w-3xl mx-auto" style={{ color: COLORS.ink2 }}>
+          We review the property's current performance or projected income — pricing, photos, listing quality, guest experience, amenities, and market comps — then identify what could be improved to increase bookings, revenue, and owner experience.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-4 gap-5">
+        {auditCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Card key={card.title} className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{card.title}</div>
+                <Icon size={20} style={{ color: COLORS.brass }} />
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>{card.description}</p>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
