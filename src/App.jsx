@@ -186,6 +186,27 @@ const ownerPipeline = [
   },
 ];
 
+const investorPipeline = [
+  {
+    stage: "Inquiry",
+    items: [
+      { id: "family-office-inquiry", name: "Family office inquiry", fund: "Alpine portfolio", status: "Modeling", meta: "Financial model under review", investor: "Family Office", source: "Referral", files: ["Model.xlsx"], notes: "Ask for portfolio underwriting metrics.", aiSummary: "High potential if the underwriting matches the premium pricing case." },
+    ],
+  },
+  {
+    stage: "Discovery",
+    items: [
+      { id: "h nw-referral", name: "High-net-worth referral", fund: "Coastal estates", status: "Due diligence", meta: "Due diligence kick-off", investor: "HNW Individual", source: "Advisor", files: ["DD Checklist.pdf"], notes: "Confirm accreditation and timing.", aiSummary: "Strong fit for hospitality-led investment strategy." },
+    ],
+  },
+  {
+    stage: "Investment",
+    items: [
+      { id: "lake-como-deal", name: "Lake Como asset", fund: "Maison du Lac", status: "Active", meta: "Asset management onboarding", investor: "Family Office", source: "Closed", files: ["ClosingDocs.pdf"], notes: "Set up first investor report schedule.", aiSummary: "This asset is now in the portfolio; focus on yield optimization." },
+    ],
+  },
+];
+
 const propertyPipelineStages = [
   {
     stage: "Qualification",
@@ -1303,29 +1324,107 @@ function OwnerAcquisition() {
 }
 
 function InvestorRelations() {
+  const [selectedInvestor, setSelectedInvestor] = useState(null);
+
+  const totals = investorPipeline.reduce((acc, stage) => {
+    acc.total += stage.items.length;
+    if (stage.stage === "Discovery") acc.discovery += stage.items.length;
+    if (stage.stage === "Investment") acc.active += stage.items.length;
+    return acc;
+  }, { total: 0, discovery: 0, active: 0 });
+
   return (
-    <ModulePage
-      eyebrow="Growth"
-      title="Investor Relations"
-      sub="Inquiry → Discovery → Financial Modeling → Due Diligence → Investment → Asset Management"
-      metrics={[
-        { label: "Active inquiries", value: "9", icon: Bell },
-        { label: "Models in review", value: "4", icon: BarChart3 },
-        { label: "Due diligence items", value: "7", icon: ClipboardList },
-        { label: "New commitments", value: "2", icon: Banknote },
-      ]}
-      rowLabel="Investor pipeline"
-      rows={[
-        { title: "Family office inquiry — alpine portfolio", meta: "Financial model under review", tag: "Modeling", tone: "warn" },
-        { title: "High-net-worth referral — coastal estates", meta: "Due diligence kick-off", tag: "Due diligence", tone: "idle" },
-        { title: "Closed investment — Lake Como asset", meta: "Asset management onboarding", tag: "Active", tone: "ok" },
-      ]}
-      aiTitle="Investment insights"
-      aiPoints={[
-        "This workspace is built for executive review and investor engagement, not bookkeeping — it tracks value creation, diligence status, and asset management handoffs.",
-        "Future automation points include deal memo generation, diligence checklist reminder sequences, and investor report summaries.",
-      ]}
-    />
+    <div className="relative">
+      <PageTitle
+        eyebrow="Growth"
+        title="Investor Relations"
+        sub="Inquiry → Discovery → Financial Modeling → Due Diligence → Investment → Asset Management"
+      />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <KpiCard label="Investor records" value={totals.total} icon={Briefcase} />
+        <KpiCard label="Discovery conversations" value={totals.discovery} icon={Bell} />
+        <KpiCard label="Active investments" value={totals.active} icon={Banknote} />
+        <KpiCard label="Models in review" value="4" icon={BarChart3} />
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {investorPipeline.map((stage) => (
+          <Card key={stage.stage} className="p-4">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.24em] font-semibold" style={{ color: COLORS.forest }}>{stage.stage}</div>
+                <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{stage.items.length} active record{stage.items.length !== 1 ? "s" : ""}</div>
+              </div>
+              <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
+            </div>
+
+            <div className="space-y-3">
+              {stage.items.length ? stage.items.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedInvestor({ ...item, currentStage: stage.stage })}
+                  className="w-full text-left rounded-2xl p-4 border bg-white hover:bg-[#f3f1ec] transition"
+                  style={{ borderColor: COLORS.line }}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{item.name}</div>
+                      <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.fund} · {item.investor}</div>
+                    </div>
+                    <div className="text-[11px] font-semibold uppercase" style={{ color: COLORS.brass }}>{item.status}</div>
+                  </div>
+                  <div className="text-xs mt-3" style={{ color: COLORS.brass }}>{item.meta}</div>
+                  <div className="mt-4 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                    <span>View investor dossier</span>
+                    <span style={{ color: COLORS.forest }}>Open</span>
+                  </div>
+                </button>
+              )) : (
+                <div className="rounded-2xl border border-dashed border-[#d3cebf] bg-[#f8f6f1] p-6 text-center text-sm" style={{ color: COLORS.mist }}>
+                  No active deals in this stage yet.
+                </div>
+              )}
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="mb-6 p-5">
+        <SectionLabel>Investor pipeline visibility</SectionLabel>
+        <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
+          Stage-based investor pipeline visibility helps the executive team see where each deal sits in the business model. Click a record to open the investor dossier, review funding status, diligence notes, and next actions.
+        </p>
+      </Card>
+
+      {selectedInvestor && (
+        <DetailPanel title={selectedInvestor.name} onClose={() => setSelectedInvestor(null)}>
+          <InfoList title="Investor dossier" items={[
+            { label: "Fund", value: selectedInvestor.fund },
+            { label: "Investor", value: selectedInvestor.investor },
+            { label: "Stage", value: selectedInvestor.currentStage },
+            { label: "Status", value: selectedInvestor.status },
+            { label: "Source", value: selectedInvestor.source },
+            { label: "Priority", value: selectedInvestor.priority || "High" },
+            { label: "Details", value: selectedInvestor.meta },
+          ]} />
+
+          <div className="grid grid-cols-3 gap-3 mt-4">
+            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Review model</button>
+            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Schedule diligence</button>
+            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Send investor update</button>
+          </div>
+
+          <Card className="mt-4">
+            <SectionLabel>Investor notes</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedInvestor.notes}</p>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>AI summary</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedInvestor.aiSummary}</p>
+          </Card>
+        </DetailPanel>
+      )}
+    </div>
   );
 }
 
