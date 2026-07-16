@@ -8,7 +8,7 @@ import {
   MessageSquare, Star, Clock, DollarSign, Home, ShieldCheck, Cpu,
   MapPin, ChevronLeft, Plus, MoreHorizontal, TrendingDown, Key, Camera,
   Route, Wallet, Megaphone, Share2, Target, Briefcase, UserCheck, Award,
-  Percent, FileCheck, Banknote, Building, MessageCircle, ListChecks
+  Percent, FileCheck, Banknote, Building, MessageCircle, ListChecks, Medal
 } from "lucide-react";
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis,
@@ -222,51 +222,53 @@ const statusStyle = {
 const navSections = [
   {
     label: "Overview",
-    items: [{ id: "dashboard", label: "Dashboard", icon: LayoutGrid }],
-  },
-  {
-    label: "Portfolio",
-    items: [
-      { id: "properties", label: "Properties", icon: Building2 },
-      { id: "property360", label: "Property 360", icon: Home },
-      { id: "owners", label: "Owners", icon: UserCircle },
-      { id: "guests", label: "Guests", icon: Users },
-      { id: "bookings", label: "Bookings", icon: CalendarDays },
-    ],
-  },
-  {
-    label: "Portals",
-    items: [
-      { id: "portal-owner", label: "Owner Portal", icon: Briefcase },
-      { id: "portal-investor", label: "Investor Portal", icon: Wallet },
-      { id: "portal-vendor", label: "Vendor Portal", icon: Route },
-      { id: "portal-guest", label: "Guest Portal", icon: Key },
-    ],
-  },
-  {
-    label: "Field operations",
-    items: [
-      { id: "operations", label: "Operations", icon: ClipboardList },
-      { id: "housekeeping", label: "Housekeeping", icon: SprayCan },
-      { id: "maintenance", label: "Maintenance", icon: Wrench },
-      { id: "concierge", label: "Concierge", icon: Compass },
-    ],
+    items: [{ id: "dashboard", label: "Executive Dashboard", icon: LayoutGrid }],
   },
   {
     label: "Growth",
     items: [
-      { id: "revenue", label: "Revenue Management", icon: BarChart3 },
+      { id: "owner-acquisition", label: "Owner Acquisition", icon: Plus },
+      { id: "investor-relations", label: "Investor Relations", icon: Briefcase },
+      { id: "partner-network", label: "Partner Network", icon: Handshake },
+      { id: "vendor-recruitment", label: "Vendor Recruitment", icon: Route },
       { id: "growthmarketing", label: "Growth & Marketing", icon: Megaphone },
-      { id: "events", label: "Experiential & Events", icon: Star },
-      { id: "investment", label: "Investment", icon: TrendingUp },
-      { id: "acquisition", label: "Owner Acquisition", icon: Plus },
-      { id: "partners", label: "Partners", icon: Handshake },
     ],
   },
   {
-    label: "Trust & Risk",
+    label: "Property Lifecycle",
     items: [
-      { id: "discretion", label: "Trust, Discretion & Risk", icon: ShieldCheck },
+      { id: "pipeline", label: "Property Pipeline", icon: MapPin },
+      { id: "onboarding", label: "Property Onboarding", icon: Home },
+      { id: "property360", label: "Property 360", icon: Building2 },
+      { id: "active-portfolio", label: "Active Portfolio", icon: Users },
+    ],
+  },
+  {
+    label: "Guest Experience",
+    items: [
+      { id: "bookings", label: "Bookings", icon: CalendarDays },
+      { id: "guests", label: "Guests", icon: Users },
+      { id: "concierge", label: "Concierge", icon: Compass },
+      { id: "events", label: "Experiences & Events", icon: Star },
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      { id: "housekeeping", label: "Housekeeping", icon: SprayCan },
+      { id: "maintenance", label: "Maintenance", icon: Wrench },
+      { id: "operations", label: "Field Operations", icon: ClipboardList },
+      { id: "sop-center", label: "SOP Center", icon: FileCheck },
+    ],
+  },
+  {
+    label: "Financial Operations",
+    items: [
+      { id: "revenue-intelligence", label: "Revenue Intelligence", icon: BarChart3 },
+      { id: "owner-payouts", label: "Owner Payouts", icon: Banknote },
+      { id: "vendor-payments", label: "Vendor Payments", icon: Wallet },
+      { id: "financial-operations", label: "Financial Operations", icon: Briefcase },
+      { id: "forecasting", label: "Forecasting", icon: Gauge },
     ],
   },
   {
@@ -281,9 +283,18 @@ const navSections = [
     ],
   },
   {
+    label: "Portals",
+    items: [
+      { id: "portal-owner", label: "Owner Portal", icon: Briefcase },
+      { id: "portal-investor", label: "Investor Portal", icon: Wallet },
+      { id: "portal-vendor", label: "Vendor Portal", icon: Route },
+      { id: "portal-guest", label: "Guest Portal", icon: Key },
+    ],
+  },
+  {
     label: "System",
     items: [
-      { id: "vision", label: "AI Operating System Vision", icon: Mountain },
+      { id: "vision", label: "AIOS Vision", icon: Mountain },
       { id: "settings", label: "Settings", icon: Settings },
     ],
   },
@@ -556,7 +567,7 @@ const realProperties = [
   { name: "The Pinewood Estate", loc: "Lake Tahoe, Nevada", tag: "Private Pier · Forest Spa", price: "$2,950" },
 ];
 
-function Properties() {
+function Properties({ onOpenProperty }) {
   return (
     <div>
       <PageTitle
@@ -582,6 +593,13 @@ function Properties() {
               <span className="text-sm" style={{ fontFamily: "'IBM Plex Mono', monospace", color: COLORS.ink }}>{p.price}<span className="text-xs" style={{ color: COLORS.mist }}>/night</span></span>
               <Pill tone="ok">Healthy</Pill>
             </div>
+            <button
+              onClick={() => onOpenProperty && onOpenProperty(p.name)}
+              className="mt-4 w-full rounded-lg py-2 text-sm font-medium"
+              style={{ background: COLORS.forest, color: COLORS.canvas }}
+            >
+              Open Property 360
+            </button>
           </Card>
         ))}
       </div>
@@ -875,25 +893,322 @@ function Investment() {
 function OwnerAcquisition() {
   return (
     <ModulePage
-      eyebrow="Growth · New department"
-      title="Owner Acquisition & Referral Partnerships"
-      sub="“Partner With Us” — free Vacation Rental Revenue Audits plus a paid referral program, separate from the Investment funnel above"
+      eyebrow="Growth"
+      title="Owner Acquisition"
+      sub="Lead → Qualification → Discovery → Property Assessment → Revenue Projection → Proposal → Contract → Onboarding → Active Portfolio"
       metrics={[
-        { label: "Audits requested, MTD", value: "31", icon: FileText },
-        { label: "Avg. turnaround", value: "41h", icon: Clock, delta: "under 48h promise" },
-        { label: "Audit → onboarded rate", value: "26%", icon: TrendingUp },
-        { label: "Referral partners active", value: "9", icon: Handshake },
+        { label: "Leads in pipeline", value: "18", icon: Users },
+        { label: "Qualified opportunities", value: "12", icon: CheckCircle2 },
+        { label: "Proposals pending", value: "5", icon: FileText },
+        { label: "Onboarding starts", value: "3", icon: Home },
       ]}
-      rowLabel="Audit & referral queue"
+      rowLabel="Acquisition pipeline"
       rows={[
-        { title: "Free audit — Sunset Ridge, Malibu", meta: "Submitted by owner directly · pricing & comp draft ready", tag: "Ready to review", tone: "warn" },
-        { title: "Referral — J. Marsh (broker)", meta: "Introduced a Lake Tahoe property, pitch in progress", tag: "We onboard", tone: "idle" },
-        { title: "Referral payout — S. Kim (designer)", meta: "Property signed and live · commission due", tag: "Get paid", tone: "ok" },
+        { title: "Villa Serenity — audit requested", meta: "Qualification in progress, pricing draft ready", tag: "Qualify", tone: "warn" },
+        { title: "Desert Mirage — discovery scheduled", meta: "Virtual site tour booked", tag: "Discovery", tone: "idle" },
+        { title: "Urban Penthouse — revenue projection complete", meta: "Proposal pending owner approval", tag: "Proposal", tone: "ok" },
       ]}
-      aiTitle="Owner Acquisition Agent"
+      aiTitle="AI pipeline support"
       aiPoints={[
-        "Pre-populates each revenue audit — pricing benchmark, listing gaps, market comps — the moment a request comes in, so the 48-hour promise is a review step for a human, not a research project.",
-        "Tracks referral commission status end-to-end (refer → onboard → paid) so realtors, brokers, and designers aren't waiting on a spreadsheet for payout confirmation.",
+        "Each stage is modeled for future automation: reminders, approvals, document generation, and handoff to onboarding once the contract is signed.",
+        "The system can auto-prep revenue projections and clean up the pipeline by moving properties into Active Portfolio once onboarding begins.",
+      ]}
+    />
+  );
+}
+
+function InvestorRelations() {
+  return (
+    <ModulePage
+      eyebrow="Growth"
+      title="Investor Relations"
+      sub="Inquiry → Discovery → Financial Modeling → Due Diligence → Investment → Asset Management"
+      metrics={[
+        { label: "Active inquiries", value: "9", icon: Bell },
+        { label: "Models in review", value: "4", icon: BarChart3 },
+        { label: "Due diligence items", value: "7", icon: ClipboardList },
+        { label: "New commitments", value: "2", icon: Banknote },
+      ]}
+      rowLabel="Investor pipeline"
+      rows={[
+        { title: "Family office inquiry — alpine portfolio", meta: "Financial model under review", tag: "Modeling", tone: "warn" },
+        { title: "High-net-worth referral — coastal estates", meta: "Due diligence kick-off", tag: "Due diligence", tone: "idle" },
+        { title: "Closed investment — Lake Como asset", meta: "Asset management onboarding", tag: "Active", tone: "ok" },
+      ]}
+      aiTitle="Investment insights"
+      aiPoints={[
+        "This workspace is built for executive review and investor engagement, not bookkeeping — it tracks value creation, diligence status, and asset management handoffs.",
+        "Future automation points include deal memo generation, diligence checklist reminder sequences, and investor report summaries.",
+      ]}
+    />
+  );
+}
+
+function VendorRecruitment() {
+  return (
+    <ModulePage
+      eyebrow="Growth"
+      title="Vendor Recruitment"
+      sub="Application → Verification → Compliance → Trial Jobs → Preferred Vendor"
+      metrics={[
+        { label: "Applications", value: "14", icon: FileText },
+        { label: "Verified vendors", value: "8", icon: ShieldCheck },
+        { label: "Compliance checks", value: "5", icon: AlertTriangle },
+        { label: "Preferred vendors", value: "12", icon: Medal },
+      ]}
+      rowLabel="Recruitment pipeline"
+      rows={[
+        { title: "Chef service application", meta: "License verification pending", tag: "Verify", tone: "warn" },
+        { title: "Luxury transport provider", meta: "Compliance file complete, trial job scheduled", tag: "Trial", tone: "idle" },
+        { title: "Housekeeping vendor", meta: "Approved for preferred network", tag: "Preferred", tone: "ok" },
+      ]}
+      aiTitle="Vendor onboarding"
+      aiPoints={[
+        "The system supports document collection and compliance status tracking so managers can approve vendors with confidence.",
+        "Future workflows will include automated trial-job reminders and vendor performance scorecards.",
+      ]}
+    />
+  );
+}
+
+function PropertyPipeline() {
+  return (
+    <ModulePage
+      eyebrow="Property Lifecycle"
+      title="Property Pipeline"
+      sub="Pre-acquisition and onboarding readiness for properties coming into the portfolio"
+      metrics={[
+        { label: "Pipeline properties", value: "6", icon: MapPin },
+        { label: "Assessments complete", value: "3", icon: CheckCircle2 },
+        { label: "Proposals pending", value: "2", icon: FileText },
+        { label: "Onboarding target", value: "1", icon: CalendarDays },
+      ]}
+      rowLabel="Pipeline stages"
+      rows={[
+        { title: "Casa Solare — assessment complete", meta: "Revenue projection ready", tag: "Proposal", tone: "warn" },
+        { title: "Mountain Escape — offer accepted", meta: "Contract processing", tag: "Contract", tone: "idle" },
+        { title: "Urban Penthouse — ownership transfer pending", meta: "Onboarding prep", tag: "Onboarding", tone: "ok" },
+      ]}
+      aiTitle="Pipeline intelligence"
+      aiPoints={[
+        "This tab is the executive view of the acquisition funnel for new properties, from first assessment through active portfolio handoff.",
+        "Future automation supports standardized property assessment summaries and readiness checklists.",
+      ]}
+    />
+  );
+}
+
+function PropertyOnboarding() {
+  return (
+    <ModulePage
+      eyebrow="Property Lifecycle"
+      title="Property Onboarding"
+      sub="Rapidly onboard new properties with one operational playbook for luxury readiness"
+      metrics={[
+        { label: "Onboarding starts", value: "4", icon: Sparkles },
+        { label: "Tasks remaining", value: "18", icon: ClipboardList },
+        { label: "Vendor setup", value: "6", icon: Handshake },
+        { label: "Guest readiness", value: "75%", icon: Home },
+      ]}
+      rowLabel="Onboarding checklist"
+      rows={[
+        { title: "Property inspection report", meta: "8 of 10 items complete", tag: "In progress", tone: "warn" },
+        { title: "Systems integration", meta: "Smart home and PMS connected", tag: "Complete", tone: "ok" },
+        { title: "Launch marketing assets", meta: "Photography scheduled", tag: "Ready", tone: "idle" },
+      ]}
+      aiTitle="Onboarding automation"
+      aiPoints={[
+        "The onboarding workspace is designed for operational readiness and owner sign-off, not property design work — it tracks the essential handoff items.",
+        "Future integrations include smart device commissioning workflows and owner review approval steps.",
+      ]}
+    />
+  );
+}
+
+function ActivePortfolio() {
+  return (
+    <ModulePage
+      eyebrow="Property Lifecycle"
+      title="Active Portfolio"
+      sub="Live operational performance for every active luxury property"
+      metrics={[
+        { label: "Active properties", value: "7", icon: Building },
+        { label: "Avg. occupancy", value: "88%", icon: Gauge },
+        { label: "Avg. guest rating", value: "4.9", icon: Star },
+        { label: "Portfolio revenue", value: "$214k", icon: DollarSign },
+      ]}
+      rowLabel="Live portfolio highlights"
+      rows={[
+        { title: "Villa Serenity — Malibu", meta: "Guest review 5.0 ★, housekeeping green", tag: "Healthy", tone: "ok" },
+        { title: "The Pinewood Estate — Tahoe", meta: "Maintenance hold scheduled next week", tag: "Monitor", tone: "warn" },
+        { title: "Desert Mirage — Joshua Tree", meta: "New VIP booking confirmed", tag: "Booked", tone: "ok" },
+      ]}
+      aiTitle="Portfolio risk overview"
+      aiPoints={[
+        "This view keeps the executive focused on live asset performance and operational risk across the active portfolio.",
+        "Future scope includes portfolio-level revenue and risk scoring tied directly to each property 360 twin.",
+      ]}
+    />
+  );
+}
+
+function SOPCenter() {
+  return (
+    <ModulePage
+      eyebrow="Operations"
+      title="SOP Center"
+      sub="Standard operating procedures, training, and operational playbooks for every team"
+      metrics={[
+        { label: "SOPs available", value: "48", icon: FileText },
+        { label: "SOP updates, 30d", value: "7", icon: Sparkles },
+        { label: "Staff trained", value: "94%", icon: Users },
+        { label: "Knowledge gaps", value: "3", icon: AlertTriangle, positive: false },
+      ]}
+      rowLabel="Operational playbooks"
+      rows={[
+        { title: "Turnover cleaning checklist", meta: "Updated weekly", tag: "Current", tone: "ok" },
+        { title: "Guest arrival hospitality sequence", meta: "VIP updates included", tag: "Current", tone: "ok" },
+        { title: "Maintenance escalation protocol", meta: "Review in 5 days", tag: "Review", tone: "idle" },
+      ]}
+      aiTitle="SOP intelligence"
+      aiPoints={[
+        "This space is the operational memory of the business, intended to surface the exact process for every core workflow.",
+        "Future functionality includes SOP version comparison and automated update notifications to impacted teams.",
+      ]}
+    />
+  );
+}
+
+function RevenueIntelligence() {
+  return (
+    <ModulePage
+      eyebrow="Financial Operations"
+      title="Revenue Intelligence"
+      sub="Portfolio revenue, pricing performance, and channel intelligence for executive decision-making"
+      metrics={[
+        { label: "Revenue, MTD", value: "$214k", icon: DollarSign },
+        { label: "RevPAR", value: "$538", icon: Gauge },
+        { label: "Direct booking share", value: "31%", icon: TrendingUp },
+        { label: "Rev impact this week", value: "+$18k", icon: BarChart3 },
+      ]}
+      rowLabel="Revenue drivers"
+      rows={[
+        { title: "Direct booking growth", meta: "Up 5 points vs. prior month", tag: "Good", tone: "ok" },
+        { title: "Channel commission pressure", meta: "Airbnb vs Booking gap", tag: "Monitor", tone: "warn" },
+        { title: "Price optimization opportunity", meta: "Salt Flat House weekend window", tag: "Action", tone: "warn" },
+      ]}
+      aiTitle="Revenue insights"
+      aiPoints={[
+        "This workspace is less about bookkeeping and more about telling the revenue story to the executive team.",
+        "It assumes external systems like Guesty, Airbnb, and QuickBooks feed data into a single command center.",
+      ]}
+    />
+  );
+}
+
+function OwnerPayouts() {
+  return (
+    <ModulePage
+      eyebrow="Financial Operations"
+      title="Owner Payouts"
+      sub="Distributions, payout schedules, and ownership earnings visibility"
+      metrics={[
+        { label: "Payouts due", value: "5", icon: Banknote },
+        { label: "Pending approvals", value: "2", icon: AlertTriangle, positive: false },
+        { label: "Avg. payout lag", value: "3d", icon: Clock },
+        { label: "Owner payout rate", value: "92%", icon: CheckCircle2 },
+      ]}
+      rowLabel="Upcoming distributions"
+      rows={[
+        { title: "Maison du Lac — July payout", meta: "Vendor adjustments pending", tag: "Review", tone: "warn" },
+        { title: "Mountain Escape — June final", meta: "Paid", tag: "Complete", tone: "ok" },
+        { title: "Villa Serenity — special bonus", meta: "Reconciliation in progress", tag: "Action", tone: "idle" },
+      ]}
+      aiTitle="Payout status"
+      aiPoints={[
+        "Payout workflows are designed to integrate with accounting systems and to flag any exception before the owner receives a statement.",
+        "This tab is the executive control point for owner cash flows, not a general ledger.",
+      ]}
+    />
+  );
+}
+
+function VendorPayments() {
+  return (
+    <ModulePage
+      eyebrow="Financial Operations"
+      title="Vendor Payments"
+      sub="Pay vendor invoices, verify compliance, and track service provider cash flow"
+      metrics={[
+        { label: "Invoices due", value: "8", icon: FileText },
+        { label: "Paid this week", value: "11", icon: CheckCircle2 },
+        { label: "Compliance holds", value: "1", icon: ShieldCheck },
+        { label: "Average payment time", value: "2d", icon: Clock },
+      ]}
+      rowLabel="Payment queue"
+      rows={[
+        { title: "Alpine Clean Co. invoice", meta: "Waiting on final quality sign-off", tag: "Pending", tone: "warn" },
+        { title: "Summit HVAC Services", meta: "Scheduled for payment tomorrow", tag: "Ready", tone: "ok" },
+        { title: "Tahoe Grounds Co.", meta: "Recurring landscape retainer", tag: "On schedule", tone: "ok" },
+      ]}
+      aiTitle="Vendor cash flow"
+      aiPoints={[
+        "This workspace tracks vendor payment health and ensures a vendor doesn’t get paused due to paperwork or compliance gaps.",
+        "Future automation includes invoice reminders and compliance expiry alerts.",
+      ]}
+    />
+  );
+}
+
+function FinancialOperations() {
+  return (
+    <ModulePage
+      eyebrow="Financial Operations"
+      title="Financial Operations"
+      sub="Company revenue, cash flow, operating expenses, and executive financial KPIs"
+      metrics={[
+        { label: "Cash flow, MTD", value: "$78k", icon: DollarSign },
+        { label: "OpEx ratio", value: "34%", icon: Briefcase },
+        { label: "Profit margin", value: "26%", icon: Gauge },
+        { label: "Vendor cost run rate", value: "$42k", icon: Wrench },
+      ]}
+      rowLabel="Financial focus areas"
+      rows={[
+        { title: "Maintenance expense review", meta: "Up 18% vs. plan", tag: "Attention", tone: "warn" },
+        { title: "Cleaning cost optimization", meta: "On track", tag: "Stable", tone: "ok" },
+        { title: "Commission tracking", meta: "Direct channel share improving", tag: "Monitor", tone: "idle" },
+      ]}
+      aiTitle="Financial command center"
+      aiPoints={[
+        "This page is the executive dashboard for financial performance, not an accounting ledger — it integrates with external systems for the numbers.",
+        "It supports decision-making around revenue, payouts, and portfolio profitability.",
+      ]}
+    />
+  );
+}
+
+function Forecasting() {
+  return (
+    <ModulePage
+      eyebrow="Financial Operations"
+      title="Forecasting"
+      sub="Revenue, occupancy, and cash flow outlook for the next 90 days"
+      metrics={[
+        { label: "Revenue forecast", value: "$650k", icon: Gauge },
+        { label: "Projected occupancy", value: "85%", icon: CalendarDays },
+        { label: "Cash runway", value: "120 days", icon: Clock },
+        { label: "Forecast accuracy", value: "93%", icon: CheckCircle2 },
+      ]}
+      rowLabel="Forecast levers"
+      rows={[
+        { title: "Pricing sensitivity", meta: "5% ADR increase could add $14k", tag: "Action", tone: "warn" },
+        { title: "Direct booking push", meta: "Improves margin by 4 pts", tag: "Recommend", tone: "ok" },
+        { title: "Expense control focus", meta: "Maintenance cost is the largest variance", tag: "Focus", tone: "idle" },
+      ]}
+      aiTitle="Forecast guidance"
+      aiPoints={[
+        "Forecasting is built around executive levers: rate, channel mix, and expense control, not transaction-level detail.",
+        "It assumes data flows in from PMS, financial systems, and revenue management tools.",
       ]}
     />
   );
@@ -1818,13 +2133,16 @@ function GuestPortal() {
 
 /* ------------------------------- Property 360 ------------------------------ */
 
-function Property360() {
+function Property360({ propertyId }) {
+  const name = propertyId || "The Pinewood Estate";
+  const details = realProperties.find((p) => p.name === name) || realProperties[0];
+
   return (
     <div>
       <PageTitle
         eyebrow="Property intelligence · Every property as its own digital asset"
-        title="Property 360 — The Pinewood Estate"
-        sub="Lake Tahoe, Nevada · everything a property manager needs, in one page"
+        title={`Property 360 — ${name}`}
+        sub={`${details.loc} · everything a property manager needs, in one page`}
       />
       <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard label="Health score" value="88" icon={ShieldCheck} />
@@ -2216,6 +2534,18 @@ const pageMeta = {
   events: "Experiential & Events",
   investment: "Investment",
   acquisition: "Owner Acquisition",
+  "investor-relations": "Investor Relations",
+  "vendor-recruitment": "Vendor Recruitment",
+  "partner-network": "Partner Network",
+  pipeline: "Property Pipeline",
+  onboarding: "Property Onboarding",
+  "active-portfolio": "Active Portfolio",
+  "sop-center": "SOP Center",
+  "revenue-intelligence": "Revenue Intelligence",
+  "owner-payouts": "Owner Payouts",
+  "vendor-payments": "Vendor Payments",
+  "financial-operations": "Financial Operations",
+  forecasting: "Forecasting",
   partners: "Partners",
   discretion: "Trust, Discretion & Risk",
   knowledge: "Knowledge Base",
@@ -2224,7 +2554,7 @@ const pageMeta = {
   agents: "AI Agents",
   reports: "Reports",
   executive: "Executive Intelligence",
-  vision: "AI Operating System Vision",
+  vision: "AIOS Vision",
   settings: "Settings",
 };
 
@@ -2254,12 +2584,13 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [active, setActive] = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState("The Pinewood Estate");
 
   const page = useMemo(() => {
     switch (active) {
       case "dashboard": return <Dashboard />;
-      case "properties": return <Properties />;
-      case "property360": return <Property360 />;
+      case "properties": return <Properties onOpenProperty={(name) => { setSelectedProperty(name); setActive("property360"); }} />;
+      case "property360": return <Property360 propertyId={selectedProperty} />;
       case "owners": return <Owners />;
       case "guests": return <Guests />;
       case "bookings": return <Bookings />;
@@ -2276,6 +2607,19 @@ export default function App() {
       case "events": return <ExperientialEvents />;
       case "investment": return <Investment />;
       case "acquisition": return <OwnerAcquisition />;
+      case "owner-acquisition": return <OwnerAcquisition />;
+      case "investor-relations": return <InvestorRelations />;
+      case "partner-network": return <Partners />;
+      case "vendor-recruitment": return <VendorRecruitment />;
+      case "pipeline": return <PropertyPipeline />;
+      case "onboarding": return <PropertyOnboarding />;
+      case "active-portfolio": return <ActivePortfolio />;
+      case "sop-center": return <SOPCenter />;
+      case "revenue-intelligence": return <RevenueIntelligence />;
+      case "owner-payouts": return <OwnerPayouts />;
+      case "vendor-payments": return <VendorPayments />;
+      case "financial-operations": return <FinancialOperations />;
+      case "forecasting": return <Forecasting />;
       case "partners": return <Partners />;
       case "discretion": return <TrustDiscretion />;
       case "knowledge": return <KnowledgeBase />;
@@ -2288,7 +2632,7 @@ export default function App() {
       case "settings": return <SettingsPage />;
       default: return <Dashboard />;
     }
-  }, [active]);
+  }, [active, selectedProperty]);
 
   if (!loggedIn) return (
     <>
