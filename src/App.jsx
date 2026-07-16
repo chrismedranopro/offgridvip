@@ -1111,6 +1111,15 @@ function Investment() {
 
 function OwnerAcquisition() {
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+  const totals = ownerPipeline.reduce((acc, stage) => {
+    acc.total += stage.items.length;
+    if (["Discovery", "Revenue Projection", "Proposal", "Contract", "Onboarding", "Live Property"].includes(stage.stage)) {
+      acc.qualified += stage.items.length;
+    }
+    if (stage.stage === "Proposal") acc.proposals = stage.items.length;
+    if (stage.stage === "Onboarding") acc.onboarding = stage.items.length;
+    return acc;
+  }, { total: 0, qualified: 0, proposals: 0, onboarding: 0 });
 
   return (
     <div className="relative">
@@ -1120,10 +1129,10 @@ function OwnerAcquisition() {
         sub="Lead → Qualification → Discovery → Property Assessment → Revenue Projection → Proposal → Contract → Onboarding → Active Portfolio"
       />
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Leads in pipeline" value="18" icon={Users} />
-        <KpiCard label="Qualified opportunities" value="12" icon={CheckCircle2} />
-        <KpiCard label="Proposals pending" value="5" icon={FileText} />
-        <KpiCard label="Onboarding starts" value="3" icon={Home} />
+        <KpiCard label="Leads in pipeline" value={totals.total} icon={Users} />
+        <KpiCard label="Qualified opportunities" value={totals.qualified} icon={CheckCircle2} />
+        <KpiCard label="Proposals pending" value={totals.proposals} icon={FileText} />
+        <KpiCard label="Onboarding starts" value={totals.onboarding} icon={Home} />
       </div>
       <div className="grid grid-cols-5 gap-4 mb-6">
         {ownerPipeline.map((stage) => (
@@ -1139,7 +1148,7 @@ function OwnerAcquisition() {
               {stage.items.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => setSelectedOpportunity(item)}
+                  onClick={() => setSelectedOpportunity({ ...item, currentStage: stage.stage })}
                   className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
                   style={{ borderColor: COLORS.line }}
                 >
@@ -1165,16 +1174,16 @@ function OwnerAcquisition() {
             { label: "Property", value: selectedOpportunity.property },
             { label: "Type", value: selectedOpportunity.type },
             { label: "Location", value: selectedOpportunity.location },
-            { label: "Bedrooms", value: selectedOpportunity.bedrooms },
-            { label: "Bathrooms", value: selectedOpportunity.bathrooms },
+            { label: "Current stage", value: selectedOpportunity.currentStage || selectedOpportunity.stage },
             { label: "Projected revenue", value: selectedOpportunity.revenue },
+            { label: "Inquiry source", value: selectedOpportunity.source },
           ]} />
           <Card className="mt-4">
-            <SectionLabel>CRM details</SectionLabel>
+            <SectionLabel>Sales & onboarding status</SectionLabel>
             <div className="space-y-2 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
-              <div className="flex items-center justify-between"><span>Source</span><span>{selectedOpportunity.source}</span></div>
               <div className="flex items-center justify-between"><span>Property management</span><span>{selectedOpportunity.pms}</span></div>
-              <div className="flex items-center justify-between"><span>Pipeline stage</span><span>{selectedOpportunity.stage}</span></div>
+              <div className="flex items-center justify-between"><span>Files attached</span><span>{selectedOpportunity.files.length}</span></div>
+              <div className="flex items-center justify-between"><span>Notes</span><span>{selectedOpportunity.notes}</span></div>
             </div>
           </Card>
           <Card className="mt-4">
