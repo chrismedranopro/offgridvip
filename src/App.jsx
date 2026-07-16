@@ -102,6 +102,210 @@ const bottleneckData = [
   { name: "Vendor invoicing", val: 8 },
 ];
 
+const vendorPipeline = [
+  {
+    stage: "Applied",
+    items: [
+      { id: "elite-cleaning", name: "Elite Cleaning", applied: "2 hours ago", services: "Housekeeping, Turnover Cleaning", coverage: "Lake Tahoe", status: "Applied", reviewer: "Ashley", notes: "Waiting W9.", insurance: "Uploaded", license: "Verified", w9: "Pending", contract: "Not Signed", aiSummary: "Looks qualified. Follow up tomorrow.", moveStage: "Verification" },
+      { id: "aspen-catering", name: "Aspen Catering", applied: "Yesterday", services: "Private chef, event catering", coverage: "Aspen", status: "Applied", reviewer: "Corey", notes: "Need insurance docs.", insurance: "Pending", license: "Verified", w9: "Received", contract: "Not Signed", aiSummary: "High-touch category with strong brand fit.", moveStage: "Verification" },
+      { id: "luxury-drivers", name: "Luxury Drivers", applied: "Yesterday", services: "Airport transfers, chauffeur cars", coverage: "Lake Tahoe", status: "Applied", reviewer: "Rita", notes: "Check driver insurance expiry.", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Not Signed", aiSummary: "Service-ready vendor for guest transport.", moveStage: "Verification" },
+    ],
+  },
+  {
+    stage: "Verification",
+    items: [
+      { id: "alpine-jets", name: "Alpine Jets", note: "Waiting Insurance", services: "Private aviation", coverage: "West Coast", status: "Verification", reviewer: "Nina", insurance: "Pending", license: "Verified", w9: "Received", contract: "Not Signed", aiSummary: "Needs insurance validation before approval.", moveStage: "Compliance" },
+      { id: "concierge-elite", name: "Concierge Elite", note: "Waiting Interview", services: "Guest host, lifestyle concierge", coverage: "National", status: "Verification", reviewer: "Sam", insurance: "Uploaded", license: "Pending", w9: "Pending", contract: "Not Signed", aiSummary: "Great fit once interview confirms experience.", moveStage: "Compliance" },
+    ],
+  },
+  {
+    stage: "Compliance",
+    items: [
+      { id: "tahoe-spa", name: "Tahoe Spa", note: "Background Check", services: "Spa therapist, massage", coverage: "Lake Tahoe", status: "Compliance", reviewer: "Maya", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Not Signed", aiSummary: "Strong local partner pending final checks.", moveStage: "Trial" },
+      { id: "white-glove-transport", name: "White Glove Transport", note: "Contract Review", services: "Limo, chauffeur", coverage: "San Francisco to Tahoe", status: "Compliance", reviewer: "Elena", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Under Review", aiSummary: "Premium transport category, contract terms need refinement.", moveStage: "Trial" },
+    ],
+  },
+  {
+    stage: "Trial",
+    items: [
+      { id: "private-chef-group", name: "Private Chef Group", note: "Trial Job", services: "Private chef, dining experiences", coverage: "West Coast", status: "Trial", reviewer: "Nina", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Signed", aiSummary: "Trial service is on track; ready to approve after guest feedback.", moveStage: "Approved" },
+    ],
+  },
+  {
+    stage: "Approved",
+    items: [
+      { id: "luxury-chauffeurs", name: "Luxury Chauffeurs", note: "Active", services: "Chauffeur and city transport", coverage: "Lake Tahoe", status: "Approved", reviewer: "Rita", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Signed", aiSummary: "Ready for assignments.", moveStage: null },
+      { id: "alpine-maintenance", name: "Alpine Maintenance", note: "Preferred", services: "HVAC, plumbing, electrical", coverage: "Lake Tahoe", status: "Approved", reviewer: "Sam", insurance: "Uploaded", license: "Verified", w9: "Received", contract: "Signed", aiSummary: "Reliable vendor for live portfolio maintenance.", moveStage: null },
+    ],
+  },
+];
+
+const ownerPipeline = [
+  {
+    stage: "Lead",
+    items: [
+      { id: "john-smith", name: "John Smith", property: "Villa Aspen", type: "Luxury Cabin", inquiry: "Yesterday", location: "Montana", bedrooms: 6, bathrooms: 5, revenue: "$340,000", pms: "Guesty", source: "Website Form", files: ["Insurance.pdf", "Ownership.pdf", "Images.zip"], notes: "Revenue looks promising.", aiSummary: "Potential flagship property.", stage: "Revenue Projection" },
+      { id: "emily-chen", name: "Emily Chen", property: "Beach House", type: "Referral", inquiry: "2 days ago", location: "Malibu", bedrooms: 5, bathrooms: 5, revenue: "$410,000", pms: "Hostaway", source: "Referral", files: ["Assessment.pdf"], notes: "Needs contract terms review.", aiSummary: "High-value referral; move fast.", stage: "Discovery" },
+    ],
+  },
+  {
+    stage: "Discovery",
+    items: [
+      { id: "sophia-vasquez", name: "Sophia Vasquez", property: "Cedar Hollow", type: "Luxury Lodge", inquiry: "3 days ago", location: "Asheville", bedrooms: 8, bathrooms: 7, revenue: "$520,000", pms: "Guesty", source: "Email", files: ["DiscoveryNotes.docx"], notes: "Schedule property assessment.", aiSummary: "Strong ownership alignment.", stage: "Property Assessment" },
+    ],
+  },
+  {
+    stage: "Revenue Projection",
+    items: [
+      { id: "mark-davis", name: "Mark Davis", property: "Canyon Ridge Retreat", type: "Estate", inquiry: "4 days ago", location: "Sedona", bedrooms: 7, bathrooms: 8, revenue: "$625,000", pms: "Airbnb", source: "Phone", files: ["Projection.xlsx"], notes: "Guest demand case is premium.", aiSummary: "Forecast supports luxury pricing strategy.", stage: "Proposal" },
+    ],
+  },
+  {
+    stage: "Proposal",
+    items: [
+      { id: "ana-li", name: "Ana Li", property: "Maison du Lac", type: "Lakefront Villa", inquiry: "6 days ago", location: "Lake Como", bedrooms: 6, bathrooms: 7, revenue: "$720,000", pms: "VRBO", source: "Consult", files: ["Proposal.pdf"], notes: "Owner reviewing revenue share.", aiSummary: "High-value asset, close probability is strong.", stage: "Contract" },
+    ],
+  },
+  {
+    stage: "Contract",
+    items: [
+      { id: "noah-williams", name: "Noah Williams", property: "Mountain Escape", type: "Ski Residence", inquiry: "1 week ago", location: "Aspen", bedrooms: 5, bathrooms: 6, revenue: "$530,000", pms: "Guesty", source: "Broker", files: ["Contract.docx"], notes: "Waiting on signed agreement.", aiSummary: "E-signature reminder recommended.", stage: "Onboarding" },
+    ],
+  },
+  {
+    stage: "Onboarding",
+    items: [
+      { id: "sarah-kim", name: "Sarah Kim", property: "Villa Serenity", type: "Ocean View Villa", inquiry: "2 weeks ago", location: "Malibu", bedrooms: 6, bathrooms: 8, revenue: "$1.2M", pms: "Guesty", source: "Email", files: ["OnboardingChecklist.xlsx"], notes: "Smart home integration underway.", aiSummary: "On track for a premium launch.", stage: "Live Property" },
+    ],
+  },
+  {
+    stage: "Live Property",
+    items: [
+      { id: "claire-ross", name: "Claire Ross", property: "Desert Mirage", type: "Boutique Retreat", inquiry: "Live", location: "Joshua Tree", bedrooms: 4, bathrooms: 5, revenue: "$285,000", pms: "Airbnb", source: "Referral", files: ["WelcomePack.pdf"], notes: "Already in active portfolio.", aiSummary: "Live property; monitor first month pacing.", stage: "Live Property" },
+    ],
+  },
+];
+
+const propertyPipelineStages = [
+  {
+    stage: "Qualification",
+    items: [
+      { name: "Villa Serenity", owner: "Michael Hall", bedrooms: 5, location: "Colorado", status: "Qualification" },
+      { name: "Casa Solare", owner: "Luca Rinaldi", bedrooms: 4, location: "Sardinia", status: "Qualification" },
+    ],
+  },
+  {
+    stage: "Assessment",
+    items: [
+      { name: "Mountain Escape", owner: "T. Osei", bedrooms: 5, location: "Aspen", status: "Assessment" },
+    ],
+  },
+  {
+    stage: "Proposal",
+    items: [
+      { name: "Urban Penthouse", owner: "S. Kim", bedrooms: 3, location: "New York", status: "Proposal" },
+    ],
+  },
+  {
+    stage: "Live",
+    items: [
+      { name: "The Pinewood Estate", owner: "R. Chen", bedrooms: 6, location: "Lake Tahoe", status: "Live" },
+    ],
+  },
+];
+
+const propertyDetails = {
+  "Villa Serenity": {
+    owner: "M. Whitfield",
+    investor: "Private Family Office",
+    revenue: "$42,000",
+    occupancy: "92%",
+    rating: "4.9",
+    utilities: "Electric, Solar, Water Monitoring",
+    maintenance: "HVAC tune, pool service",
+    housekeeping: "Daily turnover, VIP clean only",
+    contracts: "Management, vendor retainer, service agreements",
+    insurance: "Property insurance on file",
+    warranty: "Smart home and spa equipment until 2028",
+    photos: 28,
+    documents: 12,
+    bookings: 14,
+    expenses: "$9,800",
+    profit: "$32,200",
+    openTickets: 2,
+    aiRecommendations: "Pre-authorize next guest welcome package; reprofile on guest preference after checkout.",
+    inspection: "Friday",
+    review: "5.0 ★ last stay",
+  },
+  "The Pinewood Estate": {
+    owner: "R. Chen",
+    investor: "Family Office",
+    revenue: "$38,400",
+    occupancy: "91%",
+    rating: "4.8",
+    utilities: "Backup generator, solar, water treatment",
+    maintenance: "Dock resealing, HVAC diagnostics",
+    housekeeping: "Scheduled turnover every 2 days",
+    contracts: "Service retainer, guest agreement, owner statement template",
+    insurance: "Insurer: Tahoe Coverage",
+    warranty: "Sauna heater until 2029",
+    photos: 34,
+    documents: 15,
+    bookings: 12,
+    expenses: "$10,200",
+    profit: "$28,200",
+    openTickets: 1,
+    aiRecommendations: "Review HVAC ticket cluster before the next high season stretch.",
+    inspection: "Next week",
+    review: "4.9 ★ last stay",
+  },
+};
+
+const activePortfolioProperties = [
+  { name: "Villa Serenity", status: "Healthy", occupancy: "92%", revenue: "$42,000", owner: "Michael Hall", openTasks: 2, cleaningToday: "Yes", inspection: "Friday" },
+  { name: "The Pinewood Estate", status: "Monitor", occupancy: "91%", revenue: "$38,400", owner: "R. Chen", openTasks: 1, cleaningToday: "Yes", inspection: "Next week" },
+  { name: "Desert Mirage", status: "Healthy", occupancy: "88%", revenue: "$30,100", owner: "Claire Ross", openTasks: 0, cleaningToday: "No", inspection: "None" },
+];
+
+const ownerPortalSummary = {
+  name: "Michael Hall",
+  property: "Villa Serenity",
+  occupancy: "91%",
+  revenue: "$38,400",
+  bookings: 14,
+  maintenance: "None",
+  rating: "4.9",
+};
+
+const investorPortalSummary = {
+  value: "$5.4M",
+  roi: "18.5%",
+  occupancy: "88%",
+  revenue: "$214k",
+  cashFlow: "$78k",
+};
+
+const vendorPortalSummary = {
+  jobs: 7,
+  schedule: "Today: 5 jobs",
+  invoices: 3,
+  compliance: "92%",
+  payments: "$12.4k",
+};
+
+const guestPortalSummary = {
+  reservation: "Whitmore Lodge · Jul 15–19",
+  checkIn: "4:00pm",
+  digitalKey: "Ready",
+  guide: "Check-in Guide available",
+  recommendations: "Private chef, spa, guided hike",
+};
+
+const ownerPortal = ownerPortalSummary;
+const investorPortal = investorPortalSummary;
+const vendorPortal = vendorPortalSummary;
+const guestPortal = guestPortalSummary;
+
 const agents = [
   {
     name: "Operations Copilot",
@@ -393,6 +597,21 @@ function Pill({ children, tone = "idle" }) {
     >
       {children}
     </span>
+  );
+}
+
+function DetailPanel({ title, onClose, children }) {
+  return (
+    <div className="fixed right-0 top-0 h-full w-[420px] bg-white shadow-2xl border-l border-gray-200 z-50">
+      <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: COLORS.line }}>
+        <div>
+          <div className="text-xs uppercase tracking-[0.18em]" style={{ color: COLORS.mist, fontFamily: "'IBM Plex Mono', monospace" }}>Detail</div>
+          <div className="text-lg font-semibold" style={{ color: COLORS.ink }}>{title}</div>
+        </div>
+        <button onClick={onClose} className="text-sm text-slate-500">Close</button>
+      </div>
+      <div className="p-5 overflow-y-auto h-[calc(100%-72px)]">{children}</div>
+    </div>
   );
 }
 
@@ -891,29 +1110,91 @@ function Investment() {
 }
 
 function OwnerAcquisition() {
+  const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+
   return (
-    <ModulePage
-      eyebrow="Growth"
-      title="Owner Acquisition"
-      sub="Lead → Qualification → Discovery → Property Assessment → Revenue Projection → Proposal → Contract → Onboarding → Active Portfolio"
-      metrics={[
-        { label: "Leads in pipeline", value: "18", icon: Users },
-        { label: "Qualified opportunities", value: "12", icon: CheckCircle2 },
-        { label: "Proposals pending", value: "5", icon: FileText },
-        { label: "Onboarding starts", value: "3", icon: Home },
-      ]}
-      rowLabel="Acquisition pipeline"
-      rows={[
-        { title: "Villa Serenity — audit requested", meta: "Qualification in progress, pricing draft ready", tag: "Qualify", tone: "warn" },
-        { title: "Desert Mirage — discovery scheduled", meta: "Virtual site tour booked", tag: "Discovery", tone: "idle" },
-        { title: "Urban Penthouse — revenue projection complete", meta: "Proposal pending owner approval", tag: "Proposal", tone: "ok" },
-      ]}
-      aiTitle="AI pipeline support"
-      aiPoints={[
-        "Each stage is modeled for future automation: reminders, approvals, document generation, and handoff to onboarding once the contract is signed.",
-        "The system can auto-prep revenue projections and clean up the pipeline by moving properties into Active Portfolio once onboarding begins.",
-      ]}
-    />
+    <div className="relative">
+      <PageTitle
+        eyebrow="Growth"
+        title="Owner Acquisition"
+        sub="Lead → Qualification → Discovery → Property Assessment → Revenue Projection → Proposal → Contract → Onboarding → Active Portfolio"
+      />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <KpiCard label="Leads in pipeline" value="18" icon={Users} />
+        <KpiCard label="Qualified opportunities" value="12" icon={CheckCircle2} />
+        <KpiCard label="Proposals pending" value="5" icon={FileText} />
+        <KpiCard label="Onboarding starts" value="3" icon={Home} />
+      </div>
+      <div className="grid grid-cols-5 gap-4 mb-6">
+        {ownerPipeline.map((stage) => (
+          <Card key={stage.stage} className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{stage.stage}</div>
+                <div className="text-xs" style={{ color: COLORS.mist }}>{stage.items.length} item{stage.items.length !== 1 ? "s" : ""}</div>
+              </div>
+              <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
+            </div>
+            <div className="space-y-3">
+              {stage.items.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedOpportunity(item)}
+                  className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
+                  style={{ borderColor: COLORS.line }}
+                >
+                  <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{item.name}</div>
+                  <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.property} · {item.location}</div>
+                  <div className="text-xs mt-2" style={{ color: COLORS.brass }}>{item.notes}</div>
+                </button>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+      <Card>
+        <SectionLabel>Owner acquisition insights</SectionLabel>
+        <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
+          This view surfaces the acquisition funnel as record-based stages instead of a static summary. Each opportunity opens a detail panel with revenue, property profile, and AI recommendations.
+        </p>
+      </Card>
+
+      {selectedOpportunity && (
+        <DetailPanel title={selectedOpportunity.name} onClose={() => setSelectedOpportunity(null)}>
+          <InfoList title="Opportunity summary" items={[
+            { label: "Property", value: selectedOpportunity.property },
+            { label: "Type", value: selectedOpportunity.type },
+            { label: "Location", value: selectedOpportunity.location },
+            { label: "Bedrooms", value: selectedOpportunity.bedrooms },
+            { label: "Bathrooms", value: selectedOpportunity.bathrooms },
+            { label: "Projected revenue", value: selectedOpportunity.revenue },
+          ]} />
+          <Card className="mt-4">
+            <SectionLabel>CRM details</SectionLabel>
+            <div className="space-y-2 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+              <div className="flex items-center justify-between"><span>Source</span><span>{selectedOpportunity.source}</span></div>
+              <div className="flex items-center justify-between"><span>Property management</span><span>{selectedOpportunity.pms}</span></div>
+              <div className="flex items-center justify-between"><span>Pipeline stage</span><span>{selectedOpportunity.stage}</span></div>
+            </div>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>Files</SectionLabel>
+            <div className="space-y-2 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+              {selectedOpportunity.files.map((file) => (
+                <div key={file} className="flex items-center justify-between">
+                  <span>{file}</span>
+                  <Pill tone="ok">Available</Pill>
+                </div>
+              ))}
+            </div>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>AI recommendation</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedOpportunity.aiSummary}</p>
+          </Card>
+        </DetailPanel>
+      )}
+    </div>
   );
 }
 
@@ -945,56 +1226,127 @@ function InvestorRelations() {
 }
 
 function VendorRecruitment() {
+  const [selectedVendor, setSelectedVendor] = useState(null);
+
   return (
-    <ModulePage
-      eyebrow="Growth"
-      title="Vendor Recruitment"
-      sub="Application → Verification → Compliance → Trial Jobs → Preferred Vendor"
-      metrics={[
-        { label: "Applications", value: "14", icon: FileText },
-        { label: "Verified vendors", value: "8", icon: ShieldCheck },
-        { label: "Compliance checks", value: "5", icon: AlertTriangle },
-        { label: "Preferred vendors", value: "12", icon: Medal },
-      ]}
-      rowLabel="Recruitment pipeline"
-      rows={[
-        { title: "Chef service application", meta: "License verification pending", tag: "Verify", tone: "warn" },
-        { title: "Luxury transport provider", meta: "Compliance file complete, trial job scheduled", tag: "Trial", tone: "idle" },
-        { title: "Housekeeping vendor", meta: "Approved for preferred network", tag: "Preferred", tone: "ok" },
-      ]}
-      aiTitle="Vendor onboarding"
-      aiPoints={[
-        "The system supports document collection and compliance status tracking so managers can approve vendors with confidence.",
-        "Future workflows will include automated trial-job reminders and vendor performance scorecards.",
-      ]}
-    />
+    <div className="relative">
+      <PageTitle
+        eyebrow="Growth"
+        title="Vendor Recruitment"
+        sub="Application → Verification → Compliance → Trial Jobs → Preferred Vendor"
+      />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <KpiCard label="Applications" value="14" icon={FileText} />
+        <KpiCard label="Verified" value="8" icon={ShieldCheck} />
+        <KpiCard label="Compliance" value="5" icon={AlertTriangle} />
+        <KpiCard label="Preferred" value="12" icon={Medal} />
+      </div>
+      <div className="grid grid-cols-5 gap-4 mb-6">
+        {vendorPipeline.map((stage) => (
+          <Card key={stage.stage} className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{stage.stage}</div>
+                <div className="text-xs" style={{ color: COLORS.mist }}>{stage.items.length} item{stage.items.length !== 1 ? "s" : ""}</div>
+              </div>
+              <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
+            </div>
+            <div className="space-y-3">
+              {stage.items.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedVendor(item)}
+                  className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
+                  style={{ borderColor: COLORS.line }}
+                >
+                  <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{item.name}</div>
+                  <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.services}</div>
+                  <div className="text-xs mt-2" style={{ color: COLORS.brass }}>{item.note}</div>
+                </button>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+      {selectedVendor && (
+        <DetailPanel title={selectedVendor.name} onClose={() => setSelectedVendor(null)}>
+          <InfoList title="Vendor profile" items={[
+            { label: "Owner", value: "Sarah Thompson" },
+            { label: "Application date", value: "July 10" },
+            { label: "Services", value: selectedVendor.services },
+            { label: "Coverage", value: selectedVendor.coverage },
+            { label: "Assigned reviewer", value: selectedVendor.reviewer },
+            { label: "Status", value: selectedVendor.status },
+          ]} />
+          <Card className="mt-4">
+            <SectionLabel>Compliance status</SectionLabel>
+            <div className="space-y-2 mt-3">
+              <div className="flex items-center justify-between"><span>Insurance</span><span style={{ color: COLORS.ink }}>{selectedVendor.insurance}</span></div>
+              <div className="flex items-center justify-between"><span>Business License</span><span style={{ color: COLORS.ink }}>{selectedVendor.license}</span></div>
+              <div className="flex items-center justify-between"><span>W9</span><span style={{ color: COLORS.ink }}>{selectedVendor.w9}</span></div>
+              <div className="flex items-center justify-between"><span>Contract</span><span style={{ color: COLORS.ink }}>{selectedVendor.contract}</span></div>
+            </div>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>Internal Notes</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedVendor.notes}</p>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>AI Recommendation</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedVendor.aiSummary}</p>
+            {selectedVendor.moveStage && <button className="mt-4 w-full rounded-lg py-2" style={{ background: COLORS.brass, color: COLORS.ink }}>Move to {selectedVendor.moveStage}</button>}
+          </Card>
+        </DetailPanel>
+      )}
+    </div>
   );
 }
 
-function PropertyPipeline() {
+function PropertyPipeline({ onOpenProperty }) {
   return (
-    <ModulePage
-      eyebrow="Property Lifecycle"
-      title="Property Pipeline"
-      sub="Pre-acquisition and onboarding readiness for properties coming into the portfolio"
-      metrics={[
-        { label: "Pipeline properties", value: "6", icon: MapPin },
-        { label: "Assessments complete", value: "3", icon: CheckCircle2 },
-        { label: "Proposals pending", value: "2", icon: FileText },
-        { label: "Onboarding target", value: "1", icon: CalendarDays },
-      ]}
-      rowLabel="Pipeline stages"
-      rows={[
-        { title: "Casa Solare — assessment complete", meta: "Revenue projection ready", tag: "Proposal", tone: "warn" },
-        { title: "Mountain Escape — offer accepted", meta: "Contract processing", tag: "Contract", tone: "idle" },
-        { title: "Urban Penthouse — ownership transfer pending", meta: "Onboarding prep", tag: "Onboarding", tone: "ok" },
-      ]}
-      aiTitle="Pipeline intelligence"
-      aiPoints={[
-        "This tab is the executive view of the acquisition funnel for new properties, from first assessment through active portfolio handoff.",
-        "Future automation supports standardized property assessment summaries and readiness checklists.",
-      ]}
-    />
+    <div>
+      <PageTitle
+        eyebrow="Property Lifecycle"
+        title="Property Pipeline"
+        sub="Every record in the acquisition funnel with stage-based visibility and Trello-like flow"
+      />
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <KpiCard label="Qualification" value="2" icon={CheckCircle2} />
+        <KpiCard label="Assessment" value="1" icon={ClipboardList} />
+        <KpiCard label="Proposal" value="1" icon={FileText} />
+        <KpiCard label="Live properties" value="1" icon={Building} />
+      </div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {propertyPipelineStages.map((stage) => (
+          <Card key={stage.stage}>
+            <div className="mb-3">
+              <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{stage.stage}</div>
+              <div className="text-xs" style={{ color: COLORS.mist }}>{stage.items.length} card{stage.items.length !== 1 ? "s" : ""}</div>
+            </div>
+            <div className="space-y-3">
+              {stage.items.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => onOpenProperty && onOpenProperty(item.name)}
+                  className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
+                  style={{ borderColor: COLORS.line }}
+                >
+                  <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{item.name}</div>
+                  <div className="text-xs mt-1" style={{ color: COLORS.mist }}>Owner {item.owner} · {item.location}</div>
+                  <div className="text-xs mt-2" style={{ color: COLORS.brass }}>{item.bedrooms} beds · {item.status}</div>
+                </button>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
+      <Card>
+        <SectionLabel>Pipeline vision</SectionLabel>
+        <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
+          Once a property becomes live, it exits the pipeline and flows into Active Portfolio. This view is designed to mirror modern CRM pipelines rather than static metrics.
+        </p>
+      </Card>
+    </div>
   );
 }
 
@@ -1025,30 +1377,48 @@ function PropertyOnboarding() {
   );
 }
 
-function ActivePortfolio() {
+function ActivePortfolio({ onOpenProperty }) {
   return (
-    <ModulePage
-      eyebrow="Property Lifecycle"
-      title="Active Portfolio"
-      sub="Live operational performance for every active luxury property"
-      metrics={[
-        { label: "Active properties", value: "7", icon: Building },
-        { label: "Avg. occupancy", value: "88%", icon: Gauge },
-        { label: "Avg. guest rating", value: "4.9", icon: Star },
-        { label: "Portfolio revenue", value: "$214k", icon: DollarSign },
-      ]}
-      rowLabel="Live portfolio highlights"
-      rows={[
-        { title: "Villa Serenity — Malibu", meta: "Guest review 5.0 ★, housekeeping green", tag: "Healthy", tone: "ok" },
-        { title: "The Pinewood Estate — Tahoe", meta: "Maintenance hold scheduled next week", tag: "Monitor", tone: "warn" },
-        { title: "Desert Mirage — Joshua Tree", meta: "New VIP booking confirmed", tag: "Booked", tone: "ok" },
-      ]}
-      aiTitle="Portfolio risk overview"
-      aiPoints={[
-        "This view keeps the executive focused on live asset performance and operational risk across the active portfolio.",
-        "Future scope includes portfolio-level revenue and risk scoring tied directly to each property 360 twin.",
-      ]}
-    />
+    <div>
+      <PageTitle
+        eyebrow="Property Lifecycle"
+        title="Active Portfolio"
+        sub="A live operational command center for every property in the active portfolio"
+      />
+      <div className="grid grid-cols-3 gap-5 mb-6">
+        {activePortfolioProperties.map((property) => (
+          <Card key={property.name}>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{property.name}</div>
+                <div className="text-xs" style={{ color: COLORS.mist }}>{property.owner}</div>
+              </div>
+              <Pill tone={property.status === "Healthy" ? "ok" : property.status === "Monitor" ? "warn" : "idle"}>{property.status}</Pill>
+            </div>
+            <div className="space-y-3 text-sm" style={{ color: COLORS.ink2 }}>
+              <div className="flex items-center justify-between"><span>Occupancy</span><span>{property.occupancy}</span></div>
+              <div className="flex items-center justify-between"><span>Revenue</span><span>{property.revenue}</span></div>
+              <div className="flex items-center justify-between"><span>Open tasks</span><span>{property.openTasks}</span></div>
+              <div className="flex items-center justify-between"><span>Cleaning today</span><span>{property.cleaningToday}</span></div>
+              <div className="flex items-center justify-between"><span>Inspection</span><span>{property.inspection}</span></div>
+            </div>
+            <button
+              onClick={() => onOpenProperty && onOpenProperty(property.name)}
+              className="mt-4 w-full rounded-lg py-2 text-sm font-medium"
+              style={{ background: COLORS.brass, color: COLORS.ink }}
+            >
+              Open Property 360
+            </button>
+          </Card>
+        ))}
+      </div>
+      <Card>
+        <SectionLabel>Portfolio summary</SectionLabel>
+        <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
+          The portfolio view now surfaces a record-style summary for each active property so executives can scan performance and operational risk at the same time.
+        </p>
+      </Card>
+    </div>
   );
 }
 
@@ -2135,38 +2505,76 @@ function GuestPortal() {
 
 function Property360({ propertyId }) {
   const name = propertyId || "The Pinewood Estate";
-  const details = realProperties.find((p) => p.name === name) || realProperties[0];
+  const details = propertyDetails[name] || propertyDetails["The Pinewood Estate"];
+  const basic = realProperties.find((p) => p.name === name) || realProperties[0];
 
   return (
     <div>
       <PageTitle
         eyebrow="Property intelligence · Every property as its own digital asset"
         title={`Property 360 — ${name}`}
-        sub={`${details.loc} · everything a property manager needs, in one page`}
+        sub={`${basic.loc} · the digital twin for one luxury property`}
       />
       <div className="grid grid-cols-4 gap-4 mb-5">
         <KpiCard label="Health score" value="88" icon={ShieldCheck} />
-        <KpiCard label="Occupancy, MTD" value="91%" icon={Gauge} />
-        <KpiCard label="Guest rating" value="4.9" icon={Star} mono={false} />
-        <KpiCard label="Open issues" value="1" icon={Wrench} positive={false} />
+        <KpiCard label="Occupancy" value={details.occupancy} icon={Gauge} />
+        <KpiCard label="Guest rating" value={details.rating} icon={Star} mono={false} />
+        <KpiCard label="Open tickets" value={details.openTickets} icon={Wrench} positive={details.openTickets === 0} />
       </div>
 
       <div className="grid grid-cols-3 gap-5 mb-5">
-        <InfoList title="Property profile" items={[
-          { label: "Bedrooms / baths", value: "6 / 7" },
-          { label: "Max guests", value: "12" },
-          { label: "Assigned owner", value: "R. Chen" },
-          { label: "Assigned staff", value: "M. Ortiz (property mgr.)" },
+        <InfoList title="Property details" items={[
+          { label: "Owner", value: details.owner },
+          { label: "Investor", value: details.investor },
+          { label: "Current revenue", value: details.revenue },
+          { label: "Rating", value: details.rating },
+          { label: "Inspection", value: details.inspection },
+          { label: "Last review", value: details.review },
         ]} />
-        <InfoList title="Assigned vendors" items={[
-          { label: "Cleaning", value: "Alpine Clean Co." },
-          { label: "HVAC / maintenance", value: "Summit HVAC Services" },
-          { label: "Landscaping", value: "Tahoe Grounds Co." },
+        <InfoList title="Operations snapshot" items={[
+          { label: "Utilities", value: details.utilities },
+          { label: "Maintenance", value: details.maintenance },
+          { label: "Housekeeping", value: details.housekeeping },
+          { label: "Insurance", value: details.insurance },
+          { label: "Warranty", value: details.warranty },
         ]} />
-        <InfoList title="Utility & equipment" items={[
-          { label: "Electric provider", value: "NV Energy" },
-          { label: "Smart home hub", value: "Warranty until 2026" },
-          { label: "Sauna heater", value: "Warranty until 2029" },
+        <InfoList title="Assets" items={[
+          { label: "Photos", value: `${details.photos} files` },
+          { label: "Documents", value: `${details.documents} docs` },
+          { label: "Bookings", value: details.bookings },
+          { label: "Expenses", value: details.expenses },
+          { label: "Profit", value: details.profit },
+        ]} />
+      </div>
+      <div className="grid grid-cols-2 gap-5 mb-5">
+        <Card>
+          <SectionLabel>Contracts & documents</SectionLabel>
+          <div className="space-y-3 mt-3">
+            {details.contracts.split(", ").map((item) => (
+              <div key={item} className="flex items-center justify-between text-sm" style={{ color: COLORS.ink2 }}>
+                <span>{item}</span>
+                <Pill tone="ok">On file</Pill>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card>
+          <SectionLabel>AI recommendations</SectionLabel>
+          <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>{details.aiRecommendations}</p>
+        </Card>
+      </div>
+      <div className="grid grid-cols-3 gap-5 mb-5">
+        <InfoList title="Maintenance timeline" items={[
+          { label: "Next inspection", value: details.inspection },
+          { label: "Recent issue", value: details.maintenance },
+        ]} />
+        <InfoList title="Revenue timeline" items={[
+          { label: "Revenue", value: details.revenue },
+          { label: "Profit", value: details.profit },
+        ]} />
+        <InfoList title="Booking & guest" items={[
+          { label: "Bookings", value: details.bookings },
+          { label: "Guest rating", value: details.rating },
         ]} />
       </div>
 
@@ -2611,9 +3019,9 @@ export default function App() {
       case "investor-relations": return <InvestorRelations />;
       case "partner-network": return <Partners />;
       case "vendor-recruitment": return <VendorRecruitment />;
-      case "pipeline": return <PropertyPipeline />;
+      case "pipeline": return <PropertyPipeline onOpenProperty={(name) => { setSelectedProperty(name); setActive("property360"); }} />;
       case "onboarding": return <PropertyOnboarding />;
-      case "active-portfolio": return <ActivePortfolio />;
+      case "active-portfolio": return <ActivePortfolio onOpenProperty={(name) => { setSelectedProperty(name); setActive("property360"); }} />;
       case "sop-center": return <SOPCenter />;
       case "revenue-intelligence": return <RevenueIntelligence />;
       case "owner-payouts": return <OwnerPayouts />;
