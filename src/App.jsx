@@ -196,13 +196,31 @@ const investorPipeline = [
   {
     stage: "Discovery",
     items: [
-      { id: "h nw-referral", name: "High-net-worth referral", fund: "Coastal estates", status: "Due diligence", meta: "Due diligence kick-off", investor: "HNW Individual", source: "Advisor", files: ["DD Checklist.pdf"], notes: "Confirm accreditation and timing.", aiSummary: "Strong fit for hospitality-led investment strategy." },
+      { id: "hnw-referral", name: "High-net-worth referral", fund: "Coastal estates", status: "Due diligence", meta: "Due diligence kick-off", investor: "HNW Individual", source: "Advisor", files: ["DD Checklist.pdf"], notes: "Confirm accreditation and timing.", aiSummary: "Strong fit for hospitality-led investment strategy." },
     ],
   },
   {
     stage: "Investment",
     items: [
       { id: "lake-como-deal", name: "Lake Como asset", fund: "Maison du Lac", status: "Active", meta: "Asset management onboarding", investor: "Family Office", source: "Closed", files: ["ClosingDocs.pdf"], notes: "Set up first investor report schedule.", aiSummary: "This asset is now in the portfolio; focus on yield optimization." },
+    ],
+  },
+  {
+    stage: "Financial Modeling",
+    items: [
+      { id: "marina-complex-model", name: "Marina complex model", fund: "Coastal Ventures", status: "Modeling", meta: "Sensitivity and cash flow scenario building", investor: "Private Equity", source: "Intro", files: ["Model_Master.xlsx"], notes: "Compare A/B pricing and operating assumptions.", aiSummary: "Run a low-occupancy downside case and a premium-hospitality upside case." },
+    ],
+  },
+  {
+    stage: "Due Diligence",
+    items: [
+      { id: "desert-retreat-dd", name: "Desert retreat review", fund: "Sunset Hospitality", status: "Due diligence", meta: "Legal, tax, and site readiness review", investor: "Family Office", source: "Referral", files: ["DD_Ticklist.pdf"], notes: "Verify zoning and service agreements before closing.", aiSummary: "Key risk is permits and service vendor readiness." },
+    ],
+  },
+  {
+    stage: "Asset Management",
+    items: [
+      { id: "alpine-haven-asset", name: "Alpine haven", fund: "Alpine portfolio", status: "Operational", meta: "Performance monitoring and investor reporting", investor: "Family Office", source: "Closed", files: ["Q2_Report.pdf"], notes: "Track guest mix and revenue uplift from new concierge offering.", aiSummary: "Revenue pacing is strong; monitor maintenance expense variance." },
     ],
   },
 ];
@@ -234,6 +252,23 @@ const propertyPipelineStages = [
     ],
   },
 ];
+
+const investorNextActions = {
+  Inquiry: "Request underwriting information and confirm investor criteria",
+  Discovery: "Complete due diligence and alignment on investment thesis",
+  "Financial Modeling": "Review the financial model and stress-test assumptions",
+  "Due Diligence": "Finalize legal, tax, and service agreement review",
+  Investment: "Schedule investor onboarding and first reporting cadence",
+  "Asset Management": "Monitor performance and update the investor on outcomes",
+};
+
+const vendorNextActions = {
+  Applied: "Collect missing insurance, license or W9 documents",
+  Verification: "Confirm licensing, insurance, and service readiness",
+  Compliance: "Finalize the contract and quality assurance checks",
+  Trial: "Collect feedback from the trial assignment and decide approval",
+  Approved: "Assign the vendor to live work orders and monitor performance",
+};
 
 const propertyDetails = {
   "Villa Serenity": {
@@ -453,10 +488,20 @@ const navSections = [
     label: "Growth",
     items: [
       { id: "owner-acquisition", label: "Owner Acquisition", icon: Plus },
-      { id: "investor-relations", label: "Investor Relations", icon: Briefcase },
       { id: "partner-network", label: "Partner Network", icon: Handshake },
-      { id: "vendor-recruitment", label: "Vendor Recruitment", icon: Route },
       { id: "growthmarketing", label: "Growth & Marketing", icon: Megaphone },
+    ],
+  },
+  {
+    label: "Investor Lifecycle",
+    items: [
+      { id: "investor-relations", label: "Investor Lifecycle", icon: Briefcase },
+    ],
+  },
+  {
+    label: "Vendor Lifecycle",
+    items: [
+      { id: "vendor-recruitment", label: "Vendor Lifecycle", icon: Route },
     ],
   },
   {
@@ -1325,6 +1370,11 @@ function OwnerAcquisition() {
 
 function InvestorRelations() {
   const [selectedInvestor, setSelectedInvestor] = useState(null);
+  const [tab, setTab] = useState("pipeline");
+
+  const investorList = investorPipeline.flatMap((stage) =>
+    stage.items.map((item) => ({ ...item, stage: stage.stage }))
+  );
 
   const totals = investorPipeline.reduce((acc, stage) => {
     acc.total += stage.items.length;
@@ -1337,83 +1387,171 @@ function InvestorRelations() {
     <div className="relative">
       <PageTitle
         eyebrow="Growth"
-        title="Investor Relations"
+        title="Investor Lifecycle"
         sub="Inquiry → Discovery → Financial Modeling → Due Diligence → Investment → Asset Management"
       />
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Investor records" value={totals.total} icon={Briefcase} />
-        <KpiCard label="Discovery conversations" value={totals.discovery} icon={Bell} />
-        <KpiCard label="Active investments" value={totals.active} icon={Banknote} />
-        <KpiCard label="Models in review" value="4" icon={BarChart3} />
-      </div>
+      <TabBar
+        tabs={[
+          { id: "pipeline", label: "Pipeline" },
+          { id: "records", label: "Investor records" },
+          { id: "insights", label: "Lifecycle insights" },
+        ]}
+        active={tab}
+        onChange={setTab}
+      />
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {investorPipeline.map((stage) => (
-          <Card key={stage.stage} className="p-4">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="text-[11px] uppercase tracking-[0.24em] font-semibold" style={{ color: COLORS.forest }}>{stage.stage}</div>
-                <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{stage.items.length} active record{stage.items.length !== 1 ? "s" : ""}</div>
-              </div>
-              <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
-            </div>
+      {tab === "pipeline" && (
+        <>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <KpiCard label="Investor records" value={totals.total} icon={Briefcase} />
+            <KpiCard label="Discovery conversations" value={totals.discovery} icon={Bell} />
+            <KpiCard label="Active investments" value={totals.active} icon={Banknote} />
+            <KpiCard label="Models in review" value="4" icon={BarChart3} />
+          </div>
 
-            <div className="space-y-3">
-              {stage.items.length ? stage.items.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedInvestor({ ...item, currentStage: stage.stage })}
-                  className="w-full text-left rounded-2xl p-4 border bg-white hover:bg-[#f3f1ec] transition"
-                  style={{ borderColor: COLORS.line }}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{item.name}</div>
-                      <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.fund} · {item.investor}</div>
-                    </div>
-                    <div className="text-[11px] font-semibold uppercase" style={{ color: COLORS.brass }}>{item.status}</div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {investorPipeline.map((stage) => (
+              <Card key={stage.stage} className="p-4">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="text-[11px] uppercase tracking-[0.24em] font-semibold" style={{ color: COLORS.forest }}>{stage.stage}</div>
+                    <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{stage.items.length} active record{stage.items.length !== 1 ? "s" : ""}</div>
                   </div>
-                  <div className="text-xs mt-3" style={{ color: COLORS.brass }}>{item.meta}</div>
-                  <div className="mt-4 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
-                    <span>View investor dossier</span>
-                    <span style={{ color: COLORS.forest }}>Open</span>
-                  </div>
-                </button>
-              )) : (
-                <div className="rounded-2xl border border-dashed border-[#d3cebf] bg-[#f8f6f1] p-6 text-center text-sm" style={{ color: COLORS.mist }}>
-                  No active deals in this stage yet.
+                  <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
                 </div>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
 
-      <Card className="mb-6 p-5">
-        <SectionLabel>Investor pipeline visibility</SectionLabel>
-        <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
-          Stage-based investor pipeline visibility helps the executive team see where each deal sits in the business model. Click a record to open the investor dossier, review funding status, diligence notes, and next actions.
-        </p>
-      </Card>
+                <div className="space-y-3">
+                  {stage.items.length ? stage.items.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedInvestor({ ...item, currentStage: stage.stage })}
+                      className="w-full text-left rounded-2xl p-4 border bg-white hover:bg-[#f3f1ec] transition"
+                      style={{ borderColor: COLORS.line }}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{item.name}</div>
+                          <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.fund} · {item.investor}</div>
+                        </div>
+                        <div className="text-[11px] font-semibold uppercase" style={{ color: COLORS.brass }}>{item.status}</div>
+                      </div>
+                      <div className="text-xs mt-3" style={{ color: COLORS.brass }}>{item.meta}</div>
+                      <div className="text-[11px] mt-3 uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                        {investorNextActions[stage.stage]}
+                      </div>
+                      <div className="mt-4 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                        <span>View details</span>
+                        <span style={{ color: COLORS.forest }}>Open</span>
+                      </div>
+                    </button>
+                  )) : (
+                    <div className="rounded-2xl border border-dashed border-[#d3cebf] bg-[#f8f6f1] p-6 text-center text-sm" style={{ color: COLORS.mist }}>
+                      No active deals in this stage yet.
+                    </div>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="mb-6 p-5">
+            <SectionLabel>Investor pipeline visibility</SectionLabel>
+            <p className="text-sm leading-relaxed" style={{ color: COLORS.ink2 }}>
+              Stage-based investor pipeline visibility helps the executive team see where each deal sits in the business model. Click a record to open the investor details, review funding status, diligence notes, and next actions.
+            </p>
+          </Card>
+        </>
+      )}
+
+      {tab === "records" && (
+        <>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <KpiCard label="Investor records" value={totals.total} icon={Briefcase} />
+            <KpiCard label="Discovery conversations" value={totals.discovery} icon={Bell} />
+            <KpiCard label="Active investments" value={totals.active} icon={Banknote} />
+            <KpiCard label="Models in review" value="4" icon={BarChart3} />
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <Card className="col-span-2">
+              <SectionLabel>Investor record directory</SectionLabel>
+              <div className="space-y-3 mt-3">
+                {investorList.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedInvestor(item)}
+                    className="w-full text-left rounded-2xl p-4 border bg-white hover:bg-[#f3f1ec] transition"
+                    style={{ borderColor: COLORS.line }}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{item.name}</div>
+                        <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.fund} · {item.investor}</div>
+                      </div>
+                      <Pill tone={item.stage === "Investment" ? "ok" : item.stage === "Due Diligence" ? "warn" : "idle"}>{item.stage}</Pill>
+                    </div>
+                    <div className="text-xs mt-3" style={{ color: COLORS.brass }}>{item.meta}</div>
+                    <div className="text-[11px] mt-2 uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                      {investorNextActions[item.stage]}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Stage distribution</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                {investorPipeline.map((stage) => (
+                  <div key={stage.stage} className="flex items-center justify-between border-b border-[rgba(218,216,207,0.8)] py-3">
+                    <span>{stage.stage}</span>
+                    <span>{stage.items.length} record{stage.items.length !== 1 ? "s" : ""}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </>
+      )}
+
+      {tab === "insights" && (
+        <>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <Card>
+              <SectionLabel>Lifecycle definition</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                <p>Investor lifecycle is visible across inquiry, discovery, modeling, diligence, active investment, and asset management.</p>
+                <p>Each stage captures who owns the next action, what documents are required, and the expected timing for review or close.</p>
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Current priorities</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                <p>Financial models are in review for two new funds. Focus diligence on site readiness and service agreements.</p>
+                <p>Schedule the next investor report for the Alpine portfolio to keep the active investment aligned with expectations.</p>
+              </div>
+            </Card>
+            <AICopilot
+              name="Investor Lifecycle AI"
+              subtitle="Executive lifecycle support"
+              capabilities={["Summarize investor status", "Surface at-risk deals", "Schedule diligence", "Draft investor updates"]}
+              sampleQ="What is the most urgent investor action this week?"
+              sampleA="The most urgent action is completing due diligence for the Desert Retreat review before the next review window closes." 
+            />
+          </div>
+        </>
+      )}
 
       {selectedInvestor && (
         <DetailPanel title={selectedInvestor.name} onClose={() => setSelectedInvestor(null)}>
-          <InfoList title="Investor dossier" items={[
+          <InfoList title="Investor details" items={[
             { label: "Fund", value: selectedInvestor.fund },
             { label: "Investor", value: selectedInvestor.investor },
-            { label: "Stage", value: selectedInvestor.currentStage },
+            { label: "Stage", value: selectedInvestor.currentStage || selectedInvestor.stage },
             { label: "Status", value: selectedInvestor.status },
             { label: "Source", value: selectedInvestor.source },
             { label: "Priority", value: selectedInvestor.priority || "High" },
-            { label: "Details", value: selectedInvestor.meta },
+            { label: "Next action", value: investorNextActions[selectedInvestor.currentStage || selectedInvestor.stage] },
           ]} />
-
-          <div className="grid grid-cols-3 gap-3 mt-4">
-            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Review model</button>
-            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Schedule diligence</button>
-            <button className="rounded-xl border border-[#d3cebf] bg-white px-4 py-3 text-sm font-semibold transition hover:bg-[#f3f1ec]">Send investor update</button>
-          </div>
-
           <Card className="mt-4">
             <SectionLabel>Investor notes</SectionLabel>
             <p className="text-sm" style={{ color: COLORS.ink2 }}>{selectedInvestor.notes}</p>
@@ -1430,47 +1568,143 @@ function InvestorRelations() {
 
 function VendorRecruitment() {
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [tab, setTab] = useState("pipeline");
+  const vendorList = vendorPipeline.flatMap((stage) => stage.items.map((item) => ({ ...item, stage: stage.stage })));
 
   return (
     <div className="relative">
       <PageTitle
         eyebrow="Growth"
-        title="Vendor Recruitment"
-        sub="Application → Verification → Compliance → Trial Jobs → Preferred Vendor"
+        title="Vendor Lifecycle"
+        sub="Applied → Verification → Compliance → Trial → Approved vendor network"
       />
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <KpiCard label="Applications" value="14" icon={FileText} />
-        <KpiCard label="Verified" value="8" icon={ShieldCheck} />
-        <KpiCard label="Compliance" value="5" icon={AlertTriangle} />
-        <KpiCard label="Preferred" value="12" icon={Medal} />
-      </div>
-      <div className="grid grid-cols-5 gap-4 mb-6">
-        {vendorPipeline.map((stage) => (
-          <Card key={stage.stage} className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{stage.stage}</div>
-                <div className="text-xs" style={{ color: COLORS.mist }}>{stage.items.length} item{stage.items.length !== 1 ? "s" : ""}</div>
+      <TabBar
+        tabs={[
+          { id: "pipeline", label: "Pipeline" },
+          { id: "directory", label: "Vendor directory" },
+          { id: "insights", label: "Lifecycle insights" },
+        ]}
+        active={tab}
+        onChange={setTab}
+      />
+
+      {tab === "pipeline" && (
+        <>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <KpiCard label="Applications" value="14" icon={FileText} />
+            <KpiCard label="Verified" value="8" icon={ShieldCheck} />
+            <KpiCard label="Compliance" value="5" icon={AlertTriangle} />
+            <KpiCard label="Preferred" value="12" icon={Medal} />
+          </div>
+          <div className="grid grid-cols-5 gap-4 mb-6">
+            {vendorPipeline.map((stage) => (
+              <Card key={stage.stage} className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{stage.stage}</div>
+                    <div className="text-xs" style={{ color: COLORS.mist }}>{stage.items.length} item{stage.items.length !== 1 ? "s" : ""}</div>
+                  </div>
+                  <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
+                </div>
+                <div className="space-y-3">
+                  {stage.items.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedVendor(item)}
+                      className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
+                      style={{ borderColor: COLORS.line }}
+                    >
+                      <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{item.name}</div>
+                      <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.services}</div>
+                      <div className="text-xs mt-2" style={{ color: COLORS.brass }}>{item.note}</div>
+                      <div className="text-[11px] mt-3 uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                        {vendorNextActions[stage.stage]}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </>
+      )}
+
+      {tab === "directory" && (
+        <>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <KpiCard label="Applications" value="14" icon={FileText} />
+            <KpiCard label="Verified" value="8" icon={ShieldCheck} />
+            <KpiCard label="Compliance" value="5" icon={AlertTriangle} />
+            <KpiCard label="Preferred" value="12" icon={Medal} />
+          </div>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <Card className="col-span-2">
+              <SectionLabel>Vendor directory</SectionLabel>
+              <div className="space-y-3 mt-3">
+                {vendorList.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSelectedVendor(item)}
+                    className="w-full text-left rounded-2xl p-4 border bg-white hover:bg-[#f3f1ec] transition"
+                    style={{ borderColor: COLORS.line }}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-sm font-semibold" style={{ color: COLORS.ink }}>{item.name}</div>
+                        <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.services}</div>
+                      </div>
+                      <Pill tone={item.stage === "Approved" ? "ok" : item.stage === "Trial" ? "warn" : "idle"}>{item.stage}</Pill>
+                    </div>
+                    <div className="text-xs mt-3" style={{ color: COLORS.brass }}>{item.note}</div>
+                    <div className="text-[11px] mt-2 uppercase tracking-[0.18em] font-medium" style={{ color: COLORS.mist }}>
+                      {vendorNextActions[item.stage]}
+                    </div>
+                  </button>
+                ))}
               </div>
-              <Pill tone={stage.items.length ? "ok" : "idle"}>{stage.items.length ? "Live" : "Empty"}</Pill>
-            </div>
-            <div className="space-y-3">
-              {stage.items.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setSelectedVendor(item)}
-                  className="w-full text-left rounded-xl p-3 border bg-white hover:bg-[#f3f1ec]"
-                  style={{ borderColor: COLORS.line }}
-                >
-                  <div className="text-sm font-medium" style={{ color: COLORS.ink }}>{item.name}</div>
-                  <div className="text-xs mt-1" style={{ color: COLORS.mist }}>{item.services}</div>
-                  <div className="text-xs mt-2" style={{ color: COLORS.brass }}>{item.note}</div>
-                </button>
-              ))}
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+            <Card>
+              <SectionLabel>Vendor lifecycle summary</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                {vendorPipeline.map((stage) => (
+                  <div key={stage.stage} className="flex items-center justify-between border-b border-[rgba(218,216,207,0.8)] py-3">
+                    <span>{stage.stage}</span>
+                    <span>{stage.items.length} item{stage.items.length !== 1 ? "s" : ""}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </>
+      )}
+
+      {tab === "insights" && (
+        <>
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <Card>
+              <SectionLabel>Lifecycle definition</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                <p>A vendor lifecycle starts when an application is received and ends when the vendor is fully approved and serving live assignments.</p>
+                <p>Visibility across application, verification, compliance, trial, and approval keeps operations aligned with procurement and quality standards.</p>
+              </div>
+            </Card>
+            <Card>
+              <SectionLabel>Current priorities</SectionLabel>
+              <div className="space-y-3 mt-3 text-sm" style={{ color: COLORS.ink2 }}>
+                <p>Complete compliance checks for Alpine Jets and Concierge Elite this week to avoid assignment delays.</p>
+                <p>Move Private Chef Group from trial into approved status after guest feedback is collected.</p>
+              </div>
+            </Card>
+            <AICopilot
+              name="Vendor Lifecycle AI"
+              subtitle="Executive vendor support"
+              capabilities={["Summarize vendor readiness", "Flag compliance gaps", "Recommend next approvals", "Monitor trial outcomes"]}
+              sampleQ="Which vendor needs the fastest follow-up?"
+              sampleA="Alpine Jets needs its insurance validation completed before it can be assigned to any new guest bookings."
+            />
+          </div>
+        </>
+      )}
       {selectedVendor && (
         <DetailPanel title={selectedVendor.name} onClose={() => setSelectedVendor(null)}>
           <InfoList title="Vendor profile" items={[
@@ -1489,6 +1723,10 @@ function VendorRecruitment() {
               <div className="flex items-center justify-between"><span>W9</span><span style={{ color: COLORS.ink }}>{selectedVendor.w9}</span></div>
               <div className="flex items-center justify-between"><span>Contract</span><span style={{ color: COLORS.ink }}>{selectedVendor.contract}</span></div>
             </div>
+          </Card>
+          <Card className="mt-4">
+            <SectionLabel>Next step</SectionLabel>
+            <p className="text-sm" style={{ color: COLORS.ink2 }}>{vendorNextActions[selectedVendor.stage]}</p>
           </Card>
           <Card className="mt-4">
             <SectionLabel>Internal Notes</SectionLabel>
@@ -3145,8 +3383,8 @@ const pageMeta = {
   events: "Experiential & Events",
   investment: "Investment",
   acquisition: "Owner Acquisition",
-  "investor-relations": "Investor Relations",
-  "vendor-recruitment": "Vendor Recruitment",
+  "investor-relations": "Investor Lifecycle",
+  "vendor-recruitment": "Vendor Lifecycle",
   "partner-network": "Partner Network",
   pipeline: "Property Pipeline",
   onboarding: "Property Onboarding",
